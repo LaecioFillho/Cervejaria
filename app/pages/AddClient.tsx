@@ -7,3 +7,7 @@ export default function AddClient(){
     </View>
   )
 }
+
+AddClient.options = {
+  headerShown: false,  // Desativa o cabeçalho
+};

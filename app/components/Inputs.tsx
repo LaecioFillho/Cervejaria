@@ -1,18 +1,19 @@
-import { AntDesign, Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, TextInput, View } from "react-native";
 
 export default function Inputs(){
   return(
-    <View>
-      <TextInput style={styles.input} placeholder="Pesquisar">
-        <AntDesign icon="search1" color='#000'/>
-      </TextInput>
+    <View style={styles.container}>
+      <TextInput style={styles.input} placeholder="Pesquisar"/>
+      <Ionicons style={styles.icon} name="search" size={19} color="black" />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
+    width: 300,
+    height: 50,
 
   },
   input:{
@@ -22,6 +23,10 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     fontSize: 16,
-    color: "gray",
+  },
+  icon:{
+    position: 'absolute',
+    left: 260,
+    top: 13,
   },
 })

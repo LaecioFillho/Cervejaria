@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native"
+import { Image, StyleSheet, Text, View } from "react-native"
 
 export default function Logo() {
   return(
@@ -7,6 +7,8 @@ export default function Logo() {
       <View style={styles.warraper}>
         <Text style={styles.titleH3}>Cerve</Text>
         <Text style={styles.titleH3}>jaria</Text>
+
+        <Image />
       </View>
     </View>
   )
