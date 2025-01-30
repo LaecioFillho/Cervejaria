@@ -1,8 +1,9 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Logo from "./components/Logo";
 import Inputs from "./components/Inputs";
 import { useRouter } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
+import Snacks from "./components/Snacks";
 
 export default function Index() {
   const router = useRouter();
@@ -11,10 +12,12 @@ export default function Index() {
     <View style={styles.container}>
       <Logo />
       <Inputs />
-      <Pressable style={{borderColor: 'black',}}
+      <Snacks initial={'L'} name={'Laecio'}/>
+
+      <TouchableOpacity style={{borderColor: 'black',}}
         onPress={() => router.push('./pages/AddClient')}>
           <MaterialIcons name="add-to-photos" size={62}/>
-      </Pressable>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -22,7 +25,7 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
+    paddingVertical: 50,
   },
 })

@@ -1,12 +1,16 @@
 import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
 
-export default function Inputs({...rest}: TextInputProps){
+export default function InputAddClient({...rest}: TextInputProps){
 
   return(
     <View style={styles.container}>
-      <TextInput style={styles.input} placeholder="Pesquisar..." {...rest}/>
-      <Ionicons style={styles.icon} name='search' size={19} color="black" />
+      <TextInput
+        style={styles.input}
+        placeholder="Adicionar Clientes..."
+        {...rest}
+      />
+      <Ionicons style={styles.icon} name='person-add' size={19} color="black" />
     </View>
   )
 }
