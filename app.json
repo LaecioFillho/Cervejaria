@@ -4,7 +4,7 @@
     "slug": "Cervejaria",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/LogoApp.png",
+    "icon": "./assets/images/LogoUpdate.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,22 +13,22 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/LogoApp.png"
+        "foregroundImage": "./assets/images/Logo_foreground.png"
       },
-      "icon": "./assets/images/LogoApp.png",
+      "icon": "./assets/images/LogoLauncher.png",
       "package": "com.laeciosoft.Cervejaria"
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/LogoApp.png"
+      "favicon": "./assets/images/LogoUpdate.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/LogoApp.png",
+          "image": "./assets/images/LogoUpdate.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"

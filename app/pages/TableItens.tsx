@@ -45,7 +45,7 @@ export default function TableItens(){
         </View>
         <TouchableOpacity
           style={{borderColor: 'black'}}
-          onPress={() => router.back()}>
+          onPress={() => router.push('./FinishTable')}>
             <MaterialIcons name="send" size={52}/>
         </TouchableOpacity>
       </View>
