@@ -6,12 +6,15 @@
       "@/*": [
         "./*"
       ]
-    }
+    },
+    "target": "es2017",   // ou "es2022" / "esnext" se preferir
+    "module": "esnext",    // ou "es2022", "system", "node16", "nodenext"
+    "moduleResolution": "node",
   },
   "include": [
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+  ],
 }

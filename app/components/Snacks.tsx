@@ -22,7 +22,7 @@ export default function Snacks(props: propsReceiver){
 const styles = StyleSheet.create({
   container:{
     alignSelf: 'flex-start',
-    marginHorizontal: 30,
+    marginHorizontal: 10,
     marginBottom: 20,
     marginTop: 10,
   },

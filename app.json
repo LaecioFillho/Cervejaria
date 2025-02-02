@@ -5,6 +5,11 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/LogoUpdate.png",
+    "splash": {
+      "image": "./assets/images/LogoLauncher.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -13,9 +18,9 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/Logo_foreground.png"
+        "foregroundImage": "./assets/images/LogoUpdate.png"
       },
-      "icon": "./assets/images/LogoLauncher.png",
+      "icon": "./assets/images/LogoUpdate.png",
       "package": "com.laeciosoft.Cervejaria"
     },
     "web": {
@@ -29,11 +34,11 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/LogoUpdate.png",
-          "imageWidth": 200,
-          "resizeMode": "contain",
+          "imageWidth": 300,
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-sqlite"
     ],
     "experiments": {
       "typedRoutes": true
