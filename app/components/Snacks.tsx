@@ -2,16 +2,28 @@ import { router } from "expo-router"
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native"
 
 interface propsReceiver{
+  id: number,
   initial: String,
-  name: String,
+  name: string,
+}
+
+export function data(id: number, name: String){
+  return {id, name}
 }
 
 export default function Snacks(props: propsReceiver){
-  const {initial, name} = props
+  const {id, initial, name} = props
+  const item = {
+    id: id,
+    name: name
+  };
+
   return(
     <View style={styles.container}>
       <TouchableOpacity style={styles.button}
-        onPress={() => router.push('./pages/TableItens')}>
+        onPress={() => {
+          router.push({ pathname:'./pages/TableItens', params: { id: item.id, name: item.name}})}
+          }>
         <Text style={styles.h1}>{initial}</Text>
       </TouchableOpacity>
       <Text style={styles.p}>{name}</Text>

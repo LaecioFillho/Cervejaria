@@ -1,9 +1,41 @@
 import { MaterialIcons } from "@expo/vector-icons"
 import { router } from "expo-router"
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import LogoSmall from "../components/LogoSmall"
+import { useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from "react";
+import useDataBase, { Items } from "../storage/useDataBase";
 
 export default function TableItens(){
+  const { id, name } = useLocalSearchParams();
+  const dataBaseItems = useDataBase()
+  const [items, setItems] = useState<Items[]>([]);
+  let namee = ""
+
+  const data = {
+    key: name
+  }
+
+  if (Array.isArray(name)) {
+    data.key = name.join(', ');  // Caso seja um array, junta os elementos
+  } else {
+    data.key = name;  // Caso seja uma string, já é uma string
+  }
+
+  async function list() {
+    try {
+      const response = await dataBaseItems.searchByItems(data.key)
+      setItems(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    list()
+  }, [data.key])
+  list()
+
   return(
     <View style={styles.container}>
       <View style={styles.warraper}>
@@ -20,17 +52,47 @@ export default function TableItens(){
         </TouchableOpacity>
         <View>
           <Text style={styles.p}>Bem vindo!</Text>
-          <Text style={styles.h1}>Laécio</Text>
+          <Text style={styles.h1}>{name}</Text>
+          <Text style={{fontSize: 20,}}>Código: {id}</Text>
         </View>
         <TouchableOpacity
-          style={{borderColor: 'black', marginLeft: 100,}}
-          onPress={() => router.push('./Products')}>
+          style={{
+            borderColor: 'black',
+            marginLeft: 100,
+            position: 'absolute',
+            left: 220,
+          }}
+          onPress={() => {
+            router.push(
+              {
+                pathname:'./Products',
+                params: { key: data.key }
+              }
+            )
+          }}>
             <MaterialIcons name="add-box" size={52}/>
         </TouchableOpacity>
       </View>
 
       <SafeAreaView style={styles.itens}>
-
+        <FlatList
+          data={items}
+          keyExtractor={(item) => String(item.id)}
+          renderItem={({item}) =>
+            <View style={styles.listItens}>
+              <TouchableOpacity style={styles.btn}>
+                <MaterialIcons name="remove" size={50}/>
+              </TouchableOpacity>
+                <View style={styles.descriptionItens}>
+                  <Text style={styles.textItem}>{item.name}</Text>
+                  <Text style={styles.textItem}>{item.qtd}x - R$ {item.price.toFixed(2)}</Text>
+                </View>
+              <TouchableOpacity style={styles.btn}>
+                <MaterialIcons name="add" size={50}/>
+              </TouchableOpacity>
+            </View>
+          }>
+        </FlatList>
       </SafeAreaView>
 
       <View style={styles.warraper}>
@@ -56,8 +118,8 @@ export default function TableItens(){
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 30,
-    paddingRight: 20,
+    paddingVertical: 10,
+    paddingRight: 10,
   },
   warraper:{
     marginTop: 20,
@@ -71,6 +133,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 20,
+    marginBottom: 10,
   },
   itens:{
     height: 450,
@@ -103,5 +166,29 @@ const styles = StyleSheet.create({
     backgroundColor: '#E7E5E5',
     borderRadius: 50,
     gap: 5,
+  },
+  listItens:{
+    height: 80,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 10,
+  },
+  textItem:{
+    textAlign: 'center',
+    fontSize: 22,
+    fontWeight: 'bold',
+  },
+  btn:{
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    backgroundColor: '#E7E5E5',
+  },
+  descriptionItens:{
+    width: 220,
+    height: 65,
+    backgroundColor: '#E7E5E5',
+    borderRadius: 15,
   },
 })

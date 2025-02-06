@@ -68,7 +68,7 @@ export default function AddClient(){
                 size={28}
                 color="red"/>
             </TouchableOpacity>
-            <Snacks initial={item.initial} name={item.name}/>
+            <Snacks id={item.id} initial={item.initial} name={item.name}/>
           </View>
         }
         horizontal = {true}

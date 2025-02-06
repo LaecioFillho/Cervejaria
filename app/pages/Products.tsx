@@ -1,60 +1,57 @@
 import { MaterialIcons } from "@expo/vector-icons"
-import { router } from "expo-router"
+import { router, useLocalSearchParams } from "expo-router"
 import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import LogoSmall from "../components/LogoSmall"
 import Inputs from "../components/Inputs"
+import useDataBase, { products } from "../storage/useDataBase"
+import { useEffect, useState } from "react"
 
 export default function Products(){
-  const data = [
-    {
-      id: 1,
-      description: 'teste1'
-    },
-    {
-      id: 2,
-      description: 'teste2'
-    },
-    {
-      id: 3,
-      description: 'Alessandro'
-    },
-    {
-      id: 4,
-      description: 'Alessandro'
-    },
-    {
-      id: 5,
-      description: 'Alessandro'
-    },
-    {
-      id: 6,
-      description: 'Alessandro'
-    },
-    {
-      id: 7,
-      description: 'Alessandro'
-    },
-    {
-      id: 8,
-      description: 'Alessandro'
-    },
-    {
-      id: 9,
-      description: 'Alessandro'
-    },
-    {
-      id: 10,
-      description: 'Alessandro'
-    },
-    {
-      id: 11,
-      description: 'Alessandro'
-    },
-    {
-      id: 12,
-      description: 'Alessandro'
-    },
-  ]
+  let { key } = useLocalSearchParams();
+  let total = 0
+  let name = ""
+
+  const dataBaseProduscts = useDataBase()
+  const [search, setSearch] = useState("");
+  const [products, setProducts] = useState<products[]>([]);
+
+  if (Array.isArray(key)) {
+    name = key.join(', ');  // Caso seja um array, junta os elementos
+  } else {
+    name = key;  // Caso seja uma string, já é uma string
+  }
+
+  async function list() {
+    try {
+      const response = await dataBaseProduscts.searchByProduct(search)
+      setProducts(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    list()
+  }, [search])
+  list()
+
+  async function saveItem(name: string, price: number) {
+    let qtd = 1
+
+    try {
+      const response = await dataBaseProduscts.createTableItems(
+        key,
+        name,
+        price,
+        total,
+        qtd
+      )
+      alert("Produto: "+ name +" adicionado!");
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return(
     <View style={styles.container}>
       <View style={styles.warraper}>
@@ -62,6 +59,7 @@ export default function Products(){
           onPress={() => router.back()}>
             <MaterialIcons name="keyboard-double-arrow-left" size={62}/>
         </TouchableOpacity>
+        <Text style={styles.h1}>{key}</Text>
         <LogoSmall />
       </View>
       <Inputs />
@@ -86,15 +84,26 @@ export default function Products(){
 
       <SafeAreaView style={styles.listItens}>
         <FlatList
-          data={data}
+          data={products}
           keyExtractor={(item) => String(item.id)}
           renderItem={({item}) =>
-            <TouchableOpacity style={styles.itens}>
-              <Text style={styles.p}>{item.description}</Text>
+            <TouchableOpacity
+              style={styles.itens}
+              onPress={() => saveItem(item.name, item.price)}>
+              <Text style={styles.p}>{item.name} - R$ {item.price.toFixed(2)}</Text>
             </TouchableOpacity>
           }>
-
         </FlatList>
+
+        <TouchableOpacity
+          style={{
+            borderColor: 'black',
+            alignItems: 'center',
+            marginTop: 30,
+          }}
+          onPress={() => router.push('./AddProducts')}>
+            <MaterialIcons name="add-box" size={62}/>
+        </TouchableOpacity>
       </SafeAreaView>
     </View>
   )
@@ -126,7 +135,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   listItens:{
-    height: 400,
+    height: 480,
   },
   itens:{
     width: 330,
@@ -134,6 +143,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#E7E5E5',
     marginVertical: 5,
     borderRadius: 50,
+  },
+  h1:{
+    fontSize: 26,
+    color: '#000',
+    fontWeight: 'bold',
+    borderWidth: 2,
+    width: 200,
+    borderRadius: 10,
+    textAlign: 'center',
   },
   p:{
     textAlign: 'center',

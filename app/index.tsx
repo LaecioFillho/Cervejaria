@@ -27,6 +27,7 @@ export default function Index() {
       list()
     }, [search])
     list()
+    
   return (
     <View style={styles.container}>
       <Logo />
@@ -36,7 +37,7 @@ export default function Index() {
         data={clients}
         keyExtractor={(item) => String(item.id)}
         renderItem={({item}) =>
-          <Snacks initial={item.initial} name={item.name}/>
+          <Snacks id={item.id} initial={item.initial} name={item.name}/>
         }
         horizontal = {true}
       />

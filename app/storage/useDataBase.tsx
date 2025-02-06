@@ -6,6 +6,21 @@ export type createClients = {
   initial: string
 }
 
+export type products = {
+  id: number,
+  name: string,
+  price: number,
+  category: string,
+}
+
+export type Items = {
+  id: number,
+  name: string,
+  price: number,
+  total: number,
+  qtd: number
+}
+
 export default function useDataBase(){
   const database = SQLite.useSQLiteContext()
 
@@ -28,6 +43,7 @@ export default function useDataBase(){
     }
   };
 
+  //Listar Clientes
   async function searchByClient(name: string) {
     try {
       const query = "SELECT * FROM newClients WHERE name LIKE ?"
@@ -41,9 +57,82 @@ export default function useDataBase(){
     }
   };
 
+  //Remover Clientes
   async function removeClient(id: number) {
     try {
       await database.execAsync("DELETE FROM newClients WHERE id = " + id)
+    } catch (error) {
+      throw error
+    }
+  };
+
+  //Registro de Produtos
+  async function createProducts(name: string, price: number, category: string) {
+    const statement = await database.prepareAsync(
+      "INSERT INTO Products (name, price, category) VALUES ($name, $price, $category)"
+    )
+    try {
+      const result = await statement.executeAsync({
+        $name: name,
+        $price: price,
+        $category: category
+      })
+      const insertedRowId = result.lastInsertRowId.toLocaleString()
+      return { insertedRowId }
+    } catch (error) {
+      throw error
+    } finally {
+      await statement.finalizeAsync()
+    }
+  };
+
+  //Listar Produtos
+  async function searchByProduct(name: string) {
+    try {
+      const query = "SELECT * FROM Products WHERE name LIKE ?"
+
+      const response = await database.getAllAsync<products>(
+        query,[`%${name}%`]
+      )
+      return response
+    } catch (error) {
+      throw error
+    }
+  };
+
+  //Items
+
+  //Registro de itens da mesa
+  async function createTableItems(key: string, name: string, price: number, total: number, qtd: number) {
+    const statement = await database.prepareAsync(
+      "INSERT INTO ItemsTable2 (key, name, price, total, qtd) VALUES ($key, $name, $price, $total, $qtd)"
+    )
+    try {
+      const result = await statement.executeAsync({
+        $key: key,
+        $name: name,
+        $price: price,
+        $total: total,
+        $qtd: qtd
+      })
+      const insertedRowId = result.lastInsertRowId.toLocaleString()
+      return { insertedRowId }
+    } catch (error) {
+      throw error
+    } finally {
+      await statement.finalizeAsync()
+    }
+  };
+
+  //Listar itens na mesa
+  async function searchByItems(key: string) {
+    try {
+      const query = "SELECT * FROM ItemsTable2 WHERE key LIKE ?"
+
+      const response = await database.getAllAsync<Items>(
+        query,[`%${key}%`]
+      )
+      return response
     } catch (error) {
       throw error
     }
@@ -53,6 +142,10 @@ export default function useDataBase(){
     createClient,
     searchByClient,
     removeClient,
+    createProducts,
+    searchByProduct,
+    createTableItems,
+    searchByItems,
   };
 
   /*
