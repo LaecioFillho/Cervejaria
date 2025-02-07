@@ -138,6 +138,23 @@ export default function useDataBase(){
     }
   };
 
+  async function updateIncrementItens(id: number, qtd: number, total: number) {
+    const statement = await database.prepareAsync(
+      "UPDATE ItemsTable2 SET qtd = $qtd, total = $total WHERE id = $id"
+    )
+    try {
+      await statement.executeAsync({
+        $id: id,
+        $qtd: qtd,
+        $total: total
+      })
+    } catch (error) {
+      throw error
+    } finally {
+      await statement.finalizeAsync()
+    }
+  }
+
   return {
     createClient,
     searchByClient,
@@ -146,6 +163,7 @@ export default function useDataBase(){
     searchByProduct,
     createTableItems,
     searchByItems,
+    updateIncrementItens,
   };
 
   /*

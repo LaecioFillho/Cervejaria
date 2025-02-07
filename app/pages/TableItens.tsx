@@ -10,16 +10,40 @@ export default function TableItens(){
   const { id, name } = useLocalSearchParams();
   const dataBaseItems = useDataBase()
   const [items, setItems] = useState<Items[]>([]);
-  let namee = ""
-
-  const data = {
-    key: name
-  }
+  const data = {key: name}
 
   if (Array.isArray(name)) {
     data.key = name.join(', ');  // Caso seja um array, junta os elementos
   } else {
     data.key = name;  // Caso seja uma string, já é uma string
+  }
+
+
+
+  async function IncrementItem(idd: number, qtdd: number, pricee: number, totall: number){
+    console.log("Id do Produto: " + idd)
+    console.log("qtd antes do Produto: " + qtdd)
+    console.log("soma antes do Produto: " + pricee)
+    console.log("Valor do Produto: " + totall)
+    let qtd = qtdd + 1
+    let total = pricee + totall
+    console.log("Id do Produto: " + idd)
+    console.log("qtd depois do Produto: " + qtd)
+    console.log("soma depois do Produto: " + total)
+    console.log("Valor do Produto: " + pricee)
+
+
+
+    try {
+      const response = await dataBaseItems.updateIncrementItens(
+        idd,
+        qtd,
+        total
+      )
+    } catch (error) {
+      console.log(error)
+    }
+    list()
   }
 
   async function list() {
@@ -85,9 +109,12 @@ export default function TableItens(){
               </TouchableOpacity>
                 <View style={styles.descriptionItens}>
                   <Text style={styles.textItem}>{item.name}</Text>
-                  <Text style={styles.textItem}>{item.qtd}x - R$ {item.price.toFixed(2)}</Text>
+                  <Text style={styles.textItem}>{item.qtd}x - R$ {item.total.toFixed(2)}</Text>
                 </View>
-              <TouchableOpacity style={styles.btn}>
+              <TouchableOpacity
+                style={styles.btn}
+                onPress={() => {IncrementItem(item.id, item.qtd, item.price, item.total)}}
+                >
                 <MaterialIcons name="add" size={50}/>
               </TouchableOpacity>
             </View>

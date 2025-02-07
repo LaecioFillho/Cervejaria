@@ -37,6 +37,7 @@ export default function Products(){
 
   async function saveItem(name: string, price: number) {
     let qtd = 1
+    total = price
 
     try {
       const response = await dataBaseProduscts.createTableItems(
