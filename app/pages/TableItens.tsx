@@ -18,22 +18,9 @@ export default function TableItens(){
     data.key = name;  // Caso seja uma string, já é uma string
   }
 
-
-
   async function IncrementItem(idd: number, qtdd: number, pricee: number, totall: number){
-    console.log("Id do Produto: " + idd)
-    console.log("qtd antes do Produto: " + qtdd)
-    console.log("soma antes do Produto: " + pricee)
-    console.log("Valor do Produto: " + totall)
     let qtd = qtdd + 1
     let total = pricee + totall
-    console.log("Id do Produto: " + idd)
-    console.log("qtd depois do Produto: " + qtd)
-    console.log("soma depois do Produto: " + total)
-    console.log("Valor do Produto: " + pricee)
-
-
-
     try {
       const response = await dataBaseItems.updateIncrementItens(
         idd,
@@ -42,6 +29,25 @@ export default function TableItens(){
       )
     } catch (error) {
       console.log(error)
+    }
+    list()
+  }
+
+  async function decrementItem(idd: number, qtdd: number, pricee: number, totall: number){
+    if(qtdd === 1){
+      removeItem(idd)
+    }else{
+      let qtd = qtdd - 1
+      let total = totall - pricee
+      try {
+        const response = await dataBaseItems.updateIncrementItens(
+          idd,
+          qtd,
+          total
+        )
+      } catch (error) {
+        console.log(error)
+      }
     }
     list()
   }
@@ -58,7 +64,27 @@ export default function TableItens(){
   useEffect(() => {
     list()
   }, [data.key])
+
+  async function removeItem(id: number) {
+    try {
+      await dataBaseItems.removeItens(id)
+      await list()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  async function removeItemName(key: string) {
+    try {
+      await dataBaseItems.removeItensName(key)
+      await list()
+    } catch (error) {
+      console.log(error)
+    }
+  }
   list()
+
+  const totais = items.map(item => item.total);  // Recupera todos os totais
+  const cont = totais.reduce((acc, total) => acc + (total || 0), 0);
 
   return(
     <View style={styles.container}>
@@ -104,7 +130,10 @@ export default function TableItens(){
           keyExtractor={(item) => String(item.id)}
           renderItem={({item}) =>
             <View style={styles.listItens}>
-              <TouchableOpacity style={styles.btn}>
+              <TouchableOpacity
+                style={styles.btn}
+                onPress={() => {decrementItem(item.id, item.qtd, item.price, item.total)}}
+                >
                 <MaterialIcons name="remove" size={50}/>
               </TouchableOpacity>
                 <View style={styles.descriptionItens}>
@@ -125,12 +154,12 @@ export default function TableItens(){
       <View style={styles.warraper}>
         <TouchableOpacity
           style={{borderColor: 'black', marginLeft: 15,}}
-          onPress={() => router.back()}>
+          onPress={() => removeItemName((data.key))}>
             <MaterialIcons name="check-box" size={52}/>
         </TouchableOpacity>
         <View style={styles.total}>
           <Text style={{fontSize: 22,}}>Total:</Text>
-          <Text style={{fontSize: 22, fontWeight: 'bold'}}>R$ {"0,00"}</Text>
+          <Text style={{fontSize: 22, fontWeight: 'bold'}}>R$ {cont.toFixed(2)}</Text>
         </View>
         <TouchableOpacity
           style={{borderColor: 'black'}}

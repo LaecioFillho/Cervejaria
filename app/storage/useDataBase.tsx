@@ -155,6 +155,32 @@ export default function useDataBase(){
     }
   }
 
+  //Remover Itens da mesa por ID
+  async function removeItens(id: number) {
+    try {
+      await database.execAsync("DELETE FROM ItemsTable2 WHERE id = " + id)
+    } catch (error) {
+      throw error
+    }
+  };
+
+  //Remover Itens da mesa por NAME
+  async function removeItensName(key: string) {
+    try {
+      const query = `DELETE FROM ItemsTable2 WHERE key = '${key}'`; // Usando diretamente o valor de key
+      await database.execAsync(query);  // Executando a consulta
+      console.log(`Itens com key = ${key} deletados.`);
+    } catch (error) {
+      console.error('Erro ao deletar itens:', error);
+      throw error;
+    }
+  }
+
+  // Definindo o tipo para o resultado da consulta
+interface ResultadoConsulta {
+  totalSum: number | null;
+}
+
   return {
     createClient,
     searchByClient,
@@ -164,6 +190,8 @@ export default function useDataBase(){
     createTableItems,
     searchByItems,
     updateIncrementItens,
+    removeItens,
+    removeItensName,
   };
 
   /*

@@ -39,9 +39,10 @@ export default function AddClient(){
     list()
   }, [search])
 
-  async function remove(id: number) {
+  async function remove(id: number, name: string) {
     try {
       await addClient.removeClient(id)
+      await addClient.removeItensName(name)
       await list()
     } catch (error) {
       console.log(error)
@@ -62,7 +63,7 @@ export default function AddClient(){
           <View>
             <TouchableOpacity
               style={styles.delete}
-              onPress={() => remove(item.id)}>
+              onPress={() => remove(item.id, item.name)}>
               <MaterialIcons
                 name="restore-from-trash"
                 size={28}
