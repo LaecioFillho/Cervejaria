@@ -33,7 +33,15 @@ export default function Products(){
   useEffect(() => {
     list()
   }, [search])
-  list()
+
+  async function filterDrinks(category: string) {
+    try {
+      const response = await dataBaseProduscts.filterByItems(category)
+      setProducts(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   async function saveItem(name: string, price: number) {
     let qtd = 1
@@ -63,22 +71,32 @@ export default function Products(){
         <Text style={styles.h1}>{key}</Text>
         <LogoSmall />
       </View>
-      <Inputs />
+      <Inputs onChangeText={setSearch}/>
 
       <View style={styles.warraper1}>
-        <TouchableOpacity style={styles.btn}>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => filterDrinks("Bebidas")}>
           <Text>Bebidas</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.btn}>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => filterDrinks("Comidas")}>
           <Text>Comidas</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.btn}>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => filterDrinks("Espetos")}>
           <Text>Espetos</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.btn}>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => filterDrinks("Cachaças")}>
           <Text>Cacha.</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.btn}>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => list()}>
           <Text>All</Text>
         </TouchableOpacity>
       </View>

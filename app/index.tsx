@@ -27,11 +27,11 @@ export default function Index() {
       list()
     }, [search])
     list()
-    
+
   return (
     <View style={styles.container}>
       <Logo />
-      <Inputs />
+      <Inputs onChangeText={setSearch}/>
       <FlatList
         style={styles.row}
         data={clients}

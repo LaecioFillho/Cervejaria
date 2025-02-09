@@ -9,6 +9,11 @@ import Snacks from "../components/Snacks";
 
 export default function AddClient(){
 
+  const [idItemRemove, setIdItemRemove] = useState(0)
+  const [nameItemRemove, setNameItemRemove] = useState("")
+
+  const [screen, setScreen] = useState(styles.screenClose)
+  let confirm = ''
   let init = "T"
   const addClient = useDataBase()
   const [search, setSearch] = useState("");
@@ -39,14 +44,21 @@ export default function AddClient(){
     list()
   }, [search])
 
-  async function remove(id: number, name: string) {
+  function removeTable() {
+    setScreen(styles.screenShow)
+  }
+
+  async function remove() {
+    console.log(idItemRemove)
+    console.log(nameItemRemove)
     try {
-      await addClient.removeClient(id)
-      await addClient.removeItensName(name)
+      await addClient.removeClient(idItemRemove)
+      await addClient.removeItensName(nameItemRemove)
       await list()
     } catch (error) {
       console.log(error)
     }
+    setScreen(styles.screenClose)
   }
   list()
 
@@ -54,6 +66,7 @@ export default function AddClient(){
     <View style={styles.container}>
       <Logo />
       <InputAddClient onChangeText={setName} />
+
       <FlatList
         contentContainerStyle={{height: 50}}
         style={styles.row}
@@ -63,7 +76,11 @@ export default function AddClient(){
           <View>
             <TouchableOpacity
               style={styles.delete}
-              onPress={() => remove(item.id, item.name)}>
+              onPress={() => {
+                setIdItemRemove(item.id)
+                setNameItemRemove(item.name)
+                removeTable()
+              }}>
               <MaterialIcons
                 name="restore-from-trash"
                 size={28}
@@ -74,6 +91,24 @@ export default function AddClient(){
         }
         horizontal = {true}
       />
+
+      <View style={screen}>
+        <Text style={{fontWeight: 'bold', textAlign: 'center', fontSize: 17}}>Você deseja Excluir a MESA?</Text>
+        <View style={styles.warraper}>
+          <TouchableOpacity
+            style={{backgroundColor: '#44F54D', padding: 8, borderRadius: 3}}
+            onPress={() => remove()}
+            >
+            <Text style={{fontWeight: 'bold'}}>Confirmar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{backgroundColor: '#F5342B', padding: 8, borderRadius: 3}}
+            onPress={() => setScreen(styles.screenClose)}>
+            <Text style={{fontWeight: 'bold'}}>Cancelar</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
       <View style={styles.warraper}>
         <TouchableOpacity style={{borderColor: 'black', marginTop: 30,}}
           onPress={() => router.back()}>
@@ -108,5 +143,16 @@ const styles = StyleSheet.create({
   delete:{
     display: 'flex',
     alignItems: 'flex-end',
+  },
+  screenShow: {
+    display: 'flex',
+    position: 'absolute',
+    top: 320,
+    backgroundColor: '#E7E5E5',
+    padding: 20,
+    borderRadius: 10,
+  },
+  screenClose:{
+    display: 'none',
   },
 })

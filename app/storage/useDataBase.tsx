@@ -176,10 +176,19 @@ export default function useDataBase(){
     }
   }
 
-  // Definindo o tipo para o resultado da consulta
-interface ResultadoConsulta {
-  totalSum: number | null;
-}
+  //Listar itens por filtro em Products
+  async function filterByItems(category: string) {
+    try {
+      const query = "SELECT * FROM Products WHERE category LIKE ?"
+
+      const response = await database.getAllAsync<products>(
+        query,[`%${category}%`]
+      )
+      return response
+    } catch (error) {
+      throw error
+    }
+  };
 
   return {
     createClient,
@@ -192,6 +201,7 @@ interface ResultadoConsulta {
     updateIncrementItens,
     removeItens,
     removeItensName,
+    filterByItems,
   };
 
   /*
