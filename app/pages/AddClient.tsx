@@ -1,4 +1,4 @@
-import { Button, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import Logo from "../components/Logo";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -19,6 +19,27 @@ export default function AddClient(){
   const [search, setSearch] = useState("");
   const [name, setName] = useState("");
   const [clients, setClients] = useState<createClients[]>([]);
+
+  function verification(){
+    if(name === " " || name === null){
+      alert("Digite o nome de um cliente valido")
+    }else {
+      verifyClient()
+    }
+  }
+
+  async function verifyClient() {
+    try {
+      const response = await addClient.verifyClient(name)
+      if(response === false){
+        handleSave()
+      }else{
+        alert("Cliente Já existe! Tente outro nome.")
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   async function handleSave() {
     init = name.charAt(0)
@@ -68,7 +89,6 @@ export default function AddClient(){
       <InputAddClient onChangeText={setName} />
 
       <FlatList
-        contentContainerStyle={{height: 50}}
         style={styles.row}
         data={clients}
         keyExtractor={(item) => String(item.id)}
@@ -116,7 +136,7 @@ export default function AddClient(){
         </TouchableOpacity>
 
         <TouchableOpacity style={{borderColor: 'black', marginTop: 30,}}
-          onPress={() => handleSave()}>
+          onPress={() => verification()}>
             <MaterialIcons name="done-all" size={62}/>
         </TouchableOpacity>
       </View>

@@ -190,6 +190,23 @@ export default function useDataBase(){
     }
   };
 
+  // Função para buscar cliente
+  async function verifyClient(name: string): Promise<boolean> {
+    try {
+      const query = 'SELECT * FROM newClients WHERE name = ?';
+      const response = await database.getAllAsync(query, [name]);
+
+      if (response.length > 0) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.error('Erro ao verificar cliente:', error);
+      return false;
+    }
+  }
+  
   return {
     createClient,
     searchByClient,
@@ -202,32 +219,7 @@ export default function useDataBase(){
     removeItens,
     removeItensName,
     filterByItems,
+    verifyClient,
   };
 
-  /*
-  const result = await db.runAsync('INSERT INTO newClients (value, initial) VALUES (?, ?)', 'aaa', 100);
-
-  console.log(result.lastInsertRowId, result.changes);
-
-  await db.runAsync('UPDATE test SET intValue = ? WHERE value = ?', 999, 'aaa');// Vinculando parâmetros sem nome de argumentos variádicos
-
-  await db.runAsync('UPDATE test SET intValue = ? WHERE value = ?', [999, 'aaa']);// Vinculando parâmetros sem nome de uma matriz
-
-  await db.runAsync('DELETE FROM test WHERE value = $value', { $value: 'aaa' });// Vinculando parâmetros nomeados do objeto
-
-  // `getFirstAsync()` é útil quando você deseja obter uma única linha do banco de dados.
-  const firstRow = await db.getFirstAsync('SELECT * FROM test');
-  console.log(firstRow.id, firstRow.value, firstRow.intValue);
-
-  // `getAllAsync()` é útil quando você deseja obter todos os resultados como uma matriz de objetos.
-  const allRows = await db.getAllAsync('SELECT * FROM test');
-  for (const row of allRows) {
-    console.log(row.id, row.value, row.intValue);
-  }
-
-  // `getEachAsync()` é útil quando você deseja iterar o cursor de consulta SQLite.
-  for await (const row of db.getEachAsync('SELECT * FROM test')) {
-    console.log(row.id, row.value, row.intValue);
-  }
-*/
 };

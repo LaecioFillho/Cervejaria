@@ -134,7 +134,7 @@ export default function TableItens(){
                 style={styles.btn}
                 onPress={() => {decrementItem(item.id, item.qtd, item.price, item.total)}}
                 >
-                <MaterialIcons name="remove" size={50}/>
+                <MaterialIcons name="remove" size={45}/>
               </TouchableOpacity>
                 <View style={styles.descriptionItens}>
                   <Text style={styles.textItem}>{item.name}</Text>
@@ -144,7 +144,7 @@ export default function TableItens(){
                 style={styles.btn}
                 onPress={() => {IncrementItem(item.id, item.qtd, item.price, item.total)}}
                 >
-                <MaterialIcons name="add" size={50}/>
+                <MaterialIcons name="add" size={45}/>
               </TouchableOpacity>
             </View>
           }>
@@ -163,7 +163,10 @@ export default function TableItens(){
         </View>
         <TouchableOpacity
           style={{borderColor: 'black'}}
-          onPress={() => router.push('./FinishTable')}>
+          onPress={() => router.push({
+            pathname:'./FinishTable',
+            params: { cont }
+          })}>
             <MaterialIcons name="send" size={52}/>
         </TouchableOpacity>
       </View>
@@ -174,7 +177,7 @@ export default function TableItens(){
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 2,
     paddingRight: 10,
   },
   warraper:{
@@ -232,18 +235,21 @@ const styles = StyleSheet.create({
   },
   textItem:{
     textAlign: 'center',
-    fontSize: 22,
+    justifyContent: 'center',
+    fontSize: 20,
     fontWeight: 'bold',
   },
   btn:{
-    width: 50,
-    height: 50,
+    marginTop: 8,
+    width: 45,
+    height: 45,
     borderRadius: 50,
     backgroundColor: '#E7E5E5',
   },
   descriptionItens:{
+    padding: 3,
     width: 220,
-    height: 65,
+    height: 60,
     backgroundColor: '#E7E5E5',
     borderRadius: 15,
   },

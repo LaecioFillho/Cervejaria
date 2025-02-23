@@ -1,6 +1,6 @@
 import { MaterialIcons } from "@expo/vector-icons"
 import { router, useLocalSearchParams } from "expo-router"
-import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { FlatList, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import LogoSmall from "../components/LogoSmall"
 import Inputs from "../components/Inputs"
 import useDataBase, { products } from "../storage/useDataBase"
@@ -73,11 +73,23 @@ export default function Products(){
       </View>
       <Inputs onChangeText={setSearch}/>
 
-      <View style={styles.warraper1}>
+      <ScrollView
+        horizontal={true}
+        style={styles.warraper1}>
         <TouchableOpacity
           style={styles.btn}
-          onPress={() => filterDrinks("Bebidas")}>
-          <Text>Bebidas</Text>
+          onPress={() => filterDrinks("Refris")}>
+          <Text>Refris</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => filterDrinks("Cervejas")}>
+          <Text>Cervejas</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => filterDrinks("Cachaças")}>
+          <Text>Cachaças</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.btn}
@@ -91,15 +103,10 @@ export default function Products(){
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.btn}
-          onPress={() => filterDrinks("Cachaças")}>
-          <Text>Cacha.</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.btn}
           onPress={() => list()}>
           <Text>All</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
 
       <SafeAreaView style={styles.listItens}>
         <FlatList
@@ -122,6 +129,7 @@ export default function Products(){
           }}
           onPress={() => router.push('./AddProducts')}>
             <MaterialIcons name="add-box" size={62}/>
+          <Text style={{fontWeight: 'bold'}}>Novo Produto</Text>
         </TouchableOpacity>
       </SafeAreaView>
     </View>
@@ -148,10 +156,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginRight: 10,
     marginLeft: 10,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
   },
   listItens:{
     height: 480,
@@ -182,5 +186,6 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 15,
     backgroundColor: '#E7E5E5',
+    marginHorizontal: 5,
   }
 })

@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useState } from "react";
 import useDataBase from "../storage/useDataBase";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -8,14 +8,35 @@ import { router } from "expo-router";
 
 export default function AddProducts(){
 
+  const categories = [
+    {id: 1, category: 'Refris'},
+    {id: 2, category: 'Cervejas'},
+    {id: 3, category: 'Cachaças'},
+    {id: 4, category: 'Comidas'},
+    {id: 5, category: 'Espetos'},
+  ]
+
   const dataBaseProducts = useDataBase()
 
   const [name, setName] = useState("")
   const [price, setPrice] = useState("")
-  const [category, setCategory] = useState("")
+  const [category, setCategory] = useState("Selecione....")
+  const [modal, setModal] = useState(styles.none)
+
+  function openModal(){
+    if(modal === styles.none){
+      setModal(styles.modalCategories)
+    }else{
+      setModal(styles.none)
+    }
+  }
 
   async function handleSave() {
-    let value = parseFloat(price)
+    // Remover espaços em branco
+    setPrice(price.trim())
+    let price2 = price
+    // Convertendo p/ number && Substituir vírgula por ponto
+    let value = parseFloat(price2.replace(/,/g, '.'))
     try {
       const response = await dataBaseProducts.createProducts(name, value, category)
       alert("Produto: "+ name +" cadastrado!");
@@ -38,8 +59,24 @@ export default function AddProducts(){
       <InputsAddProducts placeholder="Nome do produto..." onChangeText={setName}/>
       <Text style={styles.h1}>Digite o valor:</Text>
       <InputsAddProducts placeholder="Valor R$..." onChangeText={setPrice}/>
-      <Text style={styles.h1}>Digite a categoria:</Text>
-      <InputsAddProducts placeholder="Ex: Bebidas, Comidas, Cachaças..." onChangeText={setCategory}/>
+      <Text style={styles.h1}>Escolha a categoria</Text>
+      <TouchableOpacity
+        style={styles.btnModal}
+        onPress={ () => openModal()}>
+        <Text style={{fontSize: 17, textAlign: 'center'}}>{category}</Text>
+      </TouchableOpacity>
+      <FlatList
+        style={modal}
+        data={categories}
+        keyExtractor={(itens) => String(itens.id)}
+        renderItem={({item}) =>
+          <TouchableOpacity
+            style={styles.listCategories}
+            onPress={() => {setCategory(item.category); setModal(styles.none)}}>
+            <Text style={{fontSize: 16}}>{item.category}</Text>
+          </TouchableOpacity>
+        }
+      />
 
       <TouchableOpacity
         style={styles.row}
@@ -85,5 +122,28 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     backgroundColor: '#E7E5E5',
     borderRadius: 10,
+  },
+  btnModal:{
+    width: 330,
+    padding: 10,
+    borderWidth: 1,
+    borderRadius: 30,
+    marginBottom: 5,
+  },
+  modalCategories:{
+    width: 320,
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+  },
+  listCategories: {
+    borderWidth: 1,
+    padding: 5,
+    marginVertical: 3,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  none:{
+    display: 'none',
   },
 })
