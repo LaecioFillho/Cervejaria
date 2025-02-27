@@ -21,7 +21,7 @@ export default function AddClient(){
   const [clients, setClients] = useState<createClients[]>([]);
 
   function verification(){
-    if(name === " " || name === null){
+    if(name === " " || name === null || name === "" || name === "."){
       alert("Digite o nome de um cliente valido")
     }else {
       verifyClient()

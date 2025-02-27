@@ -68,11 +68,21 @@ export default function Index() {
               <Text> - Dados analiticos</Text>
               <MaterialIcons name="analytics" size={22}/>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.opcMenu}>
+            <TouchableOpacity
+              style={styles.opcMenu}
+              onPress={() => {
+                router.push('./pages/UpdateProduct')
+                handleCloseModal()
+              }}>
               <Text> - Atualizar Produtos</Text>
               <MaterialIcons name="update" size={22}/>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.opcMenu}>
+            <TouchableOpacity
+              style={styles.opcMenu}
+              onPress={() => {
+                router.push('./pages/AddProducts')
+                handleCloseModal()
+              }}>
               <Text> - Novo Produto</Text>
               <MaterialIcons name="new-label" size={22}/>
             </TouchableOpacity>

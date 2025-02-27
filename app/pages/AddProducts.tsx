@@ -58,7 +58,7 @@ export default function AddProducts(){
       <Text style={styles.h1}>Digite o nome do produto:</Text>
       <InputsAddProducts placeholder="Nome do produto..." onChangeText={setName}/>
       <Text style={styles.h1}>Digite o valor:</Text>
-      <InputsAddProducts placeholder="Valor R$..." onChangeText={setPrice}/>
+      <InputsAddProducts placeholder="Valor R$..." keyboardType="numeric" onChangeText={setPrice}/>
       <Text style={styles.h1}>Escolha a categoria</Text>
       <TouchableOpacity
         style={styles.btnModal}
