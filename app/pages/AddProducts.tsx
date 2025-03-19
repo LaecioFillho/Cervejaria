@@ -1,4 +1,4 @@
-import { FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useState } from "react";
 import useDataBase from "../storage/useDataBase";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -22,12 +22,15 @@ export default function AddProducts(){
   const [price, setPrice] = useState("")
   const [category, setCategory] = useState("Selecione....")
   const [modal, setModal] = useState(styles.none)
+  const [icon, setIcon] = useState("keyboard-arrow-down")
 
   function openModal(){
     if(modal === styles.none){
       setModal(styles.modalCategories)
+      setIcon("close")
     }else{
       setModal(styles.none)
+      setIcon("keyboard-arrow-down")
     }
   }
 
@@ -39,7 +42,7 @@ export default function AddProducts(){
     let value = parseFloat(price2.replace(/,/g, '.'))
     try {
       const response = await dataBaseProducts.createProducts(name, value, category)
-      alert("Produto: "+ name +" cadastrado!");
+      Alert.alert("Sucesso!","Produto: "+ name +" cadastrado!");
     } catch (error) {
       console.log(error)
     }
@@ -64,6 +67,10 @@ export default function AddProducts(){
         style={styles.btnModal}
         onPress={ () => openModal()}>
         <Text style={{fontSize: 17, textAlign: 'center'}}>{category}</Text>
+        <MaterialIcons
+          style={{position: 'absolute', right: 15, top: 5,}}
+          name={icon}
+          size={32}/>
       </TouchableOpacity>
       <FlatList
         style={modal}
@@ -72,7 +79,11 @@ export default function AddProducts(){
         renderItem={({item}) =>
           <TouchableOpacity
             style={styles.listCategories}
-            onPress={() => {setCategory(item.category); setModal(styles.none)}}>
+            onPress={() => {
+              setCategory(item.category)
+              setModal(styles.none)
+              setIcon("keyboard-arrow-down")
+            }}>
             <Text style={{fontSize: 16}}>{item.category}</Text>
           </TouchableOpacity>
         }
@@ -82,7 +93,10 @@ export default function AddProducts(){
         style={styles.row}
         onPress={() => handleSave()}>
           <Text style={{fontSize: 26}}>Salvar</Text>
-          <MaterialIcons name="check" size={42}/>
+          <MaterialIcons
+            style={{position: 'absolute', right: 10, top: 5,}}
+            name="check"
+            size={32}/>
       </TouchableOpacity>
     </SafeAreaView>
   )
@@ -104,12 +118,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   h1:{
-    marginTop: 30,
+    marginTop: 20,
     marginBottom: 8,
     fontSize: 20,
     color: '#000',
     fontWeight: 'bold',
-    borderWidth: 2,
     width: 250,
     borderRadius: 10,
     textAlign: 'center',

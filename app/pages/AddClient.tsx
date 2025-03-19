@@ -1,9 +1,9 @@
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { Alert, FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import Logo from "../components/Logo";
 import { router } from "expo-router";
 import { MaterialIcons } from "@expo/vector-icons";
 import InputAddClient from "../components/InputAddClient";
-import useDataBase, { createClients } from "../storage/useDataBase";
+import useDataBase, { createClients, Items } from "../storage/useDataBase";
 import { useEffect, useState } from "react";
 import Snacks from "../components/Snacks";
 
@@ -13,16 +13,18 @@ export default function AddClient(){
   const [nameItemRemove, setNameItemRemove] = useState("")
 
   const [screen, setScreen] = useState(styles.screenClose)
-  let confirm = ''
-  let init = "T"
   const addClient = useDataBase()
   const [search, setSearch] = useState("");
   const [name, setName] = useState("");
   const [clients, setClients] = useState<createClients[]>([]);
+  const [items, setItems] = useState<Items[]>([]);
+
+  let init = "T"
+  let date = new Date().toLocaleDateString()
 
   function verification(){
     if(name === " " || name === null || name === "" || name === "."){
-      alert("Digite o nome de um cliente valido")
+      Alert.alert("Não foi possivel!", "Digite o nome de um cliente valido!!!")
     }else {
       verifyClient()
     }
@@ -34,7 +36,7 @@ export default function AddClient(){
       if(response === false){
         handleSave()
       }else{
-        alert("Cliente Já existe! Tente outro nome.")
+        Alert.alert("Não foi possivel!", "Cliente Já existe! Tente outro nome.")
       }
     } catch (error) {
       console.log(error)
@@ -46,7 +48,7 @@ export default function AddClient(){
 
     try {
       const response = await addClient.createClient(name, init)
-      alert("Cliente: "+ name +" cadastrado!");
+      Alert.alert("Sucesso!", "Cliente: "+ name +" cadastrado!");
     } catch (error) {
       console.log(error)
     }
@@ -60,19 +62,43 @@ export default function AddClient(){
       console.log(error)
     }
   }
-
   useEffect(() => {
     list()
   }, [search])
 
-  function removeTable() {
+  //Listar Itens da mesa que está sendo concluida p/ Salvar
+  async function listItens() {
+    let key = name
+    try {
+      const response = await addClient.searchByItems(key)
+      setItems(response)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  useEffect(() => {
+    listItens()
+  }, [name])
+
+  function removeTable(name: string) {
+    setName(name)
     setScreen(styles.screenShow)
   }
 
   async function remove() {
-    console.log(idItemRemove)
-    console.log(nameItemRemove)
+    listItens()
+    console.log(items)
     try {
+      for (const item of items) {
+        const nameProduct = item.name;
+        const price = item.price;
+        const total = item.total;
+        const qtd = item.qtd;
+
+        await addClient.Sales(name, nameProduct, price, total, qtd);
+    }
+      let nameClient = name
+      await addClient.SalesClient(nameClient, date);
       await addClient.removeClient(idItemRemove)
       await addClient.removeItensName(nameItemRemove)
       await list()
@@ -99,7 +125,7 @@ export default function AddClient(){
               onPress={() => {
                 setIdItemRemove(item.id)
                 setNameItemRemove(item.name)
-                removeTable()
+                removeTable(item.name)
               }}>
               <MaterialIcons
                 name="restore-from-trash"

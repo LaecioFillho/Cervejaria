@@ -1,13 +1,32 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, Share, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import LogoSmall from "../components/LogoSmall";
 import { MaterialIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 
+interface Item {
+  id: number;
+  name: string;
+  qtd: number;
+  price: number;
+  total: number;
+}
+
 
 export default function FinishTable(){
 
-  const { cont } = useLocalSearchParams();
+  const { name, cont, items: itemsParam } = useLocalSearchParams();
+    let items: Item[] = [];
+
+    try {
+        const parsedItems = JSON.parse(Array.isArray(itemsParam) ? itemsParam[0] : itemsParam || '[]');
+        if (Array.isArray(parsedItems)) {
+            items = parsedItems;
+        }
+    } catch (error) {
+        console.error('Erro ao analisar o JSON:', error);
+    }
+
   let data = 0
   const [modal, setModal] = useState(styles.pixClose)
 
@@ -17,15 +36,42 @@ export default function FinishTable(){
     data = Number(cont); // Se for uma string, converte diretamente
   }
 
+  async function handleShare(){
+    try {
+
+      const response = data
+      await Share.share({
+        message: `
+                                        LF.Cervejaria\n
+                                       Cliente: ${name}\n
+                 Produtos                   Quant.          Valor R$\n
+  ${items.map((item) => `            - ${item.name.padEnd(30, ' -')}  ${item.qtd}x          - R$ ${item.total.toFixed(2)}\n`).join('  ')}\n
+                                     Total: R$ ${response.toFixed(2)}\n
+
+
+        `
+        //34 espaços na primeira linha
+        //18 espaços na segunda linha
+      })
+
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.warraper}>
+
         <TouchableOpacity
           onPress={() => router.back()}>
             <MaterialIcons name="keyboard-double-arrow-left" size={62}/>
         </TouchableOpacity>
+
         <LogoSmall />
+
       </View>
+
       <Text style={styles.h1}>Metodo de Pagamentos</Text>
 
       <TouchableOpacity
@@ -34,10 +80,15 @@ export default function FinishTable(){
         <Text style={styles.p}>QR code</Text>
         <MaterialIcons name="qr-code-scanner" size={28}/>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.btn}>
-        <Text style={styles.p}>Comprovante</Text>
-        <MaterialIcons name="feed" size={28}/>
+
+      <TouchableOpacity
+        style={styles.btn}
+        onPress={() => handleShare()}
+        >
+          <Text style={styles.p}>Comprovante</Text>
+          <MaterialIcons name="feed" size={28}/>
       </TouchableOpacity>
+
       <View style={styles.row}>
         <Text style={{fontSize: 22, marginRight: 3}}>Total:</Text>
         <Text style={{fontWeight: 'bold', fontSize: 22}}> R$ {data.toFixed(2)}</Text>

@@ -1,10 +1,11 @@
-import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Logo from "../components/Logo";
 import Inputs from "../components/Inputs";
 import useDataBase, { products } from "../storage/useDataBase";
 import { useEffect, useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
 import InputsAddProducts from "../components/InputsAddProducts";
+import { router } from "expo-router";
 
 export default function UpdateProduct(){
 
@@ -19,10 +20,12 @@ export default function UpdateProduct(){
   const dataBaseProduscts = useDataBase()
   const [search, setSearch] = useState("");
   const [products, setProducts] = useState<products[]>([]);
+  const [id, setId] = useState("")
   const [name, setName] = useState("")
   const [price, setPrice] = useState("")
   const [category, setCategory] = useState("Selecione....")
-   const [modal, setModal] = useState(styles.none)
+  const [modal, setModal] = useState(styles.none)
+  const [icon, setIcon] = useState("keyboard-arrow-down")
 
   async function list() {
     try {
@@ -37,9 +40,24 @@ export default function UpdateProduct(){
     list()
   }, [search])
 
+  async function updateItens(id: number, price: number, name: string, category: string){
+    try {
+      const response = await dataBaseProduscts.updateProducts(
+        id,
+        name,
+        price,
+        category
+      )
+      Alert.alert("Sucesso!","Produto Atualizado!")
+    } catch (error) {
+      console.log(error)
+    }
+  list()
+  }
+
+  //Modals
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [modalTWOVisible, setModalTWOVisible] = useState(false);
 
   const handleOpenModal = () => {
     setModalVisible(true);
@@ -47,20 +65,62 @@ export default function UpdateProduct(){
 
   const handleCloseModal = () => {
     setModalVisible(false);
+    setModal(styles.none)
+    setIcon("keyboard-arrow-down")
   };
 
   function openModal(){
     if(modal === styles.none){
       setModal(styles.modalCategories)
+      setIcon("close")
     }else{
       setModal(styles.none)
+      setIcon("keyboard-arrow-down")
     }
   }
+
+  const handleDelete = () => {
+    handleCloseModal()
+    Alert.alert(
+      "Confirmar exclusão",
+      `Você tem certeza que deseja exluir o item: ${name}?`,
+      [
+        {
+          text: "Cancelar",
+          onPress: () => console.log("Ação cancelada"),
+          style: "cancel" // Deixa o botão "Cancelar" mais destacado
+        },
+        {
+          text: "Exluir",
+          onPress: () => remove(),
+          style: "destructive" // Torna o botão de exclusão vermelho no iOS
+        }
+      ]
+    );
+  };
+
+  async function remove() {
+    try {
+      dataBaseProduscts.removeProduct(parseFloat(id))
+      await list()
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  list()
 
   return (
     <View style={{padding: 5}}>
       <View style={styles.conatiner}>
+
+        <TouchableOpacity
+          style={{position:"absolute", right: 5, top: 0}}
+          onPress={() => router.back()}>
+            <MaterialIcons name="close" size={42}/>
+        </TouchableOpacity>
+
         <Logo />
+
         <Inputs onChangeText={setSearch}/>
 
         <Modal
@@ -71,15 +131,33 @@ export default function UpdateProduct(){
         >
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
+              <TouchableOpacity
+                style={styles.btnCloseMenu}
+                onPress={handleCloseModal} >
+                  <MaterialIcons name="close" size={35}/>
+              </TouchableOpacity>
               <Text style={styles.h1}>Atualizar Nome</Text>
-                <InputsAddProducts placeholder="Novo Nome..." onChangeText={setName}/>
+                <InputsAddProducts
+                  placeholder="Novo Nome..."
+                  value={name}
+                  onChangeText={setName}/>
                 <Text style={styles.h1}>Atualizar valor R$</Text>
-                <InputsAddProducts placeholder="Novo R$..." keyboardType="numeric" onChangeText={setPrice}/>
+                <InputsAddProducts
+                  placeholder="Novo R$..."
+                  keyboardType="numeric"
+                  value={price}
+                  onChangeText={setPrice}/>
                 <Text style={styles.h1}>Nova categoria</Text>
                 <TouchableOpacity
                   style={styles.btnModal}
-                  onPress={ () => openModal()}>
+                  onPress={ () => {
+                    openModal()
+                    }}>
                   <Text style={{fontSize: 17, textAlign: 'center'}}>{category}</Text>
+                  <MaterialIcons
+                    style={{position: 'absolute', right: 10, top: 5,}}
+                    name={icon}
+                    size={32}/>
                 </TouchableOpacity>
 
                 <FlatList
@@ -94,6 +172,24 @@ export default function UpdateProduct(){
                     </TouchableOpacity>
                   }
                 />
+              <TouchableOpacity
+                style={styles.btnDelete}
+                onPress={() => {handleDelete()}}
+              >
+                <Text style={{textAlign: 'center', fontSize: 16, fontWeight: 'bold'}}>Exluir</Text>
+                <MaterialIcons style={{position: "absolute", top: 8, right: 115,}} name="delete" size={22}/>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.itens}
+                onPress={() => {
+                  updateItens(parseFloat(id), parseFloat(price), name, category)
+                  handleCloseModal()
+                }}
+              >
+                <Text style={{textAlign: 'center', fontSize: 16, fontWeight: 'bold'}}>Salvar</Text>
+                <MaterialIcons style={{position: "absolute", top: 8, right: 115,}} name="save" size={22}/>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
@@ -105,7 +201,13 @@ export default function UpdateProduct(){
           renderItem={({item}) =>
           <TouchableOpacity
             style={styles.itens}
-            onPress={handleOpenModal}
+            onPress={() => {
+              handleOpenModal()
+              setName(item.name)
+              setCategory(item.category)
+              setPrice(String(item.price))
+              setId(String(item.id))
+            }}
             >
             <Text style={styles.p}>{item.name} - R$ {item.price.toFixed(2)}</Text>
             <MaterialIcons style={{position: 'absolute', right: 10, top: 10,}} name="edit" size={20}/>
@@ -127,12 +229,19 @@ const styles = StyleSheet.create({
   listItens:{
     marginTop: 10,
     minHeight: 400,
-    maxHeight: 600,
+    maxHeight: 485,
   },
   itens:{
     width: 330,
     padding: 10,
     backgroundColor: '#E7E5E5',
+    marginVertical: 5,
+    borderRadius: 50,
+  },
+  btnDelete:{
+    width: 330,
+    padding: 10,
+    backgroundColor: '#E53935',
     marginVertical: 5,
     borderRadius: 50,
   },
@@ -149,19 +258,18 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: 360,
-    maxHeight: 500,
+    maxHeight: 550,
     padding: 10,
     backgroundColor: '#FFF',
     borderRadius: 10,
     alignItems: 'center',
   },
   h1:{
-    marginTop: 30,
+    marginTop: 10,
     marginBottom: 8,
     fontSize: 20,
     color: '#000',
     fontWeight: 'bold',
-    borderWidth: 2,
     width: 250,
     borderRadius: 10,
     textAlign: 'center',
@@ -188,5 +296,10 @@ const styles = StyleSheet.create({
   },
   none:{
     display: 'none',
+  },
+  btnCloseMenu:{
+    position: 'absolute',
+    top: 3,
+    right: 3,
   },
 })

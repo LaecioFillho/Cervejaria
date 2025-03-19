@@ -40,5 +40,21 @@ export async function initializeDatabase(database: SQLiteDatabase) {
     total value DECIMAL(10, 2),
     qtd INTEGER NOT NULL
     );
+
+    CREATE TABLE IF NOT EXISTS Sales (
+    id INTEGER PRIMARY KEY,
+    client TEXT NOT NULL,
+    nameProduct TEXT NOT NULL,
+    price value DECIMAL(10, 2) NOT NULL,
+    total value DECIMAL(10, 2),
+    qtd INTEGER NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS SalesClient (
+    id INTEGER PRIMARY KEY,
+    nameClient TEXT NOT NULL,
+    date TEXT NOT NULL
+    );
+
   `)
 }

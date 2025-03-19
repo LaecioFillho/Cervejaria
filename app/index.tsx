@@ -60,11 +60,19 @@ export default function Index() {
                 <MaterialIcons name="close" size={35}/>
             </TouchableOpacity>
             <Text style={{fontSize: 17, fontWeight: 'bold'}}>Menu</Text>
-            <TouchableOpacity style={styles.opcMenu}>
+            <TouchableOpacity
+              style={styles.opcMenu}
+              onPress={ () => {
+                router.push("./pages/SalesHistory")
+                handleCloseModal()
+              }}
+              >
               <Text> - Historico de vendas</Text>
               <MaterialIcons name="playlist-add-check" size={22}/>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.opcMenu}>
+            <TouchableOpacity
+              style={styles.opcMenu}
+              >
               <Text> - Dados analiticos</Text>
               <MaterialIcons name="analytics" size={22}/>
             </TouchableOpacity>

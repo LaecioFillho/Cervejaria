@@ -29,7 +29,6 @@ export default function Products(){
       console.log(error)
     }
   }
-
   useEffect(() => {
     list()
   }, [search])
@@ -46,15 +45,23 @@ export default function Products(){
   async function saveItem(name: string, price: number) {
     let qtd = 1
     total = price
+    let client = Array.isArray(key) ? key.join(', ') : key;
 
     try {
       const response = await dataBaseProduscts.createTableItems(
-        key,
+        Array.isArray(key) ? key.join(', ') : key,
         name,
         price,
         total,
         qtd
       )
+      // const responseTwo = await dataBaseProduscts.Sales(
+      //   client,
+      //   name,
+      //   price,
+      //   total,
+      //   qtd
+      // )
       alert("Produto: "+ name +" adicionado!");
     } catch (error) {
       console.log(error)
@@ -138,12 +145,11 @@ export default function Products(){
 
 const styles = StyleSheet.create({
   container:{
-    padding: 20,
     display: 'flex',
     alignItems: 'center',
   },
   warraper:{
-    width: 370,
+    width: 400,
     marginTop: 20,
     marginRight: 10,
     display: 'flex',
@@ -158,7 +164,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   listItens:{
-    height: 480,
+    height: 530,
   },
   itens:{
     width: 330,
@@ -175,6 +181,7 @@ const styles = StyleSheet.create({
     width: 200,
     borderRadius: 10,
     textAlign: 'center',
+    marginTop: 5,
   },
   p:{
     textAlign: 'center',

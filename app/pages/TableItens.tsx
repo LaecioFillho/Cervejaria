@@ -60,7 +60,6 @@ export default function TableItens(){
       console.log(error)
     }
   }
-
   useEffect(() => {
     list()
   }, [data.key])
@@ -89,22 +88,29 @@ export default function TableItens(){
   return(
     <View style={styles.container}>
       <View style={styles.warraper}>
+
         <TouchableOpacity
           style={{borderColor: 'black'}}
           onPress={() => router.back()}>
             <MaterialIcons name="keyboard-double-arrow-left" size={62}/>
         </TouchableOpacity>
+
         <LogoSmall />
+
       </View>
+
       <View style={styles.warraperTwo}>
+
         <TouchableOpacity style={styles.button}>
           <MaterialIcons name="person" size={62} color='#fff'/>
         </TouchableOpacity>
+
         <View>
           <Text style={styles.p}>Bem vindo!</Text>
           <Text style={styles.h1}>{name}</Text>
           <Text style={{fontSize: 20,}}>Código: {id}</Text>
         </View>
+
         <TouchableOpacity
           style={{
             borderColor: 'black',
@@ -122,6 +128,7 @@ export default function TableItens(){
           }}>
             <MaterialIcons name="add-box" size={52}/>
         </TouchableOpacity>
+
       </View>
 
       <SafeAreaView style={styles.itens}>
@@ -157,18 +164,21 @@ export default function TableItens(){
           onPress={() => removeItemName((data.key))}>
             <MaterialIcons name="check-box" size={52}/>
         </TouchableOpacity>
+
         <View style={styles.total}>
           <Text style={{fontSize: 22,}}>Total:</Text>
           <Text style={{fontSize: 22, fontWeight: 'bold'}}>R$ {cont.toFixed(2)}</Text>
         </View>
+
         <TouchableOpacity
           style={{borderColor: 'black'}}
           onPress={() => router.push({
             pathname:'./FinishTable',
-            params: { cont }
+            params: { name, cont, items: JSON.stringify(items) }
           })}>
             <MaterialIcons name="send" size={52}/>
         </TouchableOpacity>
+
       </View>
     </View>
   )
@@ -178,7 +188,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingVertical: 2,
-    paddingRight: 10,
+    padding: 5,
   },
   warraper:{
     marginTop: 20,
@@ -195,7 +205,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   itens:{
-    height: 450,
+    minHeight: 450,
+    maxHeight: 480,
   },
   button:{
     marginLeft: 10,

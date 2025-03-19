@@ -21,6 +21,23 @@ export type Items = {
   qtd: number
 }
 
+export type SalesItens = {
+  id: number,
+  client: string
+  nameProduct: string,
+  price: number,
+  total: number,
+  qtd: number
+}
+
+export type SalesClients = {
+  id: number,
+  nameClient: string,
+  date: string
+}
+
+
+
 export default function useDataBase(){
   const database = SQLite.useSQLiteContext()
 
@@ -95,6 +112,34 @@ export default function useDataBase(){
         query,[`%${name}%`]
       )
       return response
+    } catch (error) {
+      throw error
+    }
+  };
+
+  //Atualizar Produtos
+  async function updateProducts(id: number, name: string, price: number, category: string) {
+    const statement = await database.prepareAsync(
+      "UPDATE Products SET name = $name, price = $price, category = $category WHERE id = $id"
+    )
+    try {
+      await statement.executeAsync({
+        $id: id,
+        $name: name,
+        $price: price,
+        $category: category
+      })
+    } catch (error) {
+      throw error
+    } finally {
+      await statement.finalizeAsync()
+    }
+  }
+
+  //Remover Produtos
+  async function removeProduct(id: number) {
+    try {
+      await database.execAsync("DELETE FROM Products WHERE id = " + id)
     } catch (error) {
       throw error
     }
@@ -206,13 +251,102 @@ export default function useDataBase(){
       return false;
     }
   }
-  
+
+    //Registro da Venda de um Cliente
+    async function SalesClient(nameClient: string, date: string) {
+      const statement = await database.prepareAsync(
+        "INSERT INTO SalesClient (nameClient, date) VALUES ($nameClient, $date)"
+      )
+      try {
+        const result = await statement.executeAsync({
+          $nameClient: nameClient,
+          $date: date
+        })
+        const insertedRowId = result.lastInsertRowId.toLocaleString()
+        return { insertedRowId }
+      } catch (error) {
+        throw error
+      } finally {
+        await statement.finalizeAsync()
+      }
+    };
+
+  //Registro de Vendas Concluidas
+  async function Sales(client: string, nameProduct: string, price: number, total: number, qtd: number) {
+    const statement = await database.prepareAsync(
+      "INSERT INTO Sales (client, nameProduct, price, total, qtd) VALUES ($client, $nameProduct, $price, $total, $qtd)"
+    )
+    try {
+      const result = await statement.executeAsync({
+        $client: client,
+        $nameProduct: nameProduct,
+        $price: price,
+        $total: total,
+        $qtd: qtd
+      })
+      const insertedRowId = result.lastInsertRowId.toLocaleString()
+      return { insertedRowId }
+    } catch (error) {
+      throw error
+    } finally {
+      await statement.finalizeAsync()
+    }
+  };
+
+  //Listar Vendas Finalizadas
+  async function listSales(client: string) {
+    try {
+      const query = "SELECT * FROM Sales WHERE client LIKE ?"
+
+      const response = await database.getAllAsync<SalesItens>(
+        query,[`%${client}%`]
+      )
+      return response
+    } catch (error) {
+      throw error
+    }
+  };
+
+  //Listar Clientes de Vendas Finalizadas
+  async function listSalesClients(name: string) {
+    try {
+      const query = "SELECT * FROM SalesClient WHERE id LIKE ?"
+
+      const response = await database.getAllAsync<SalesClients>(
+        query,[`%${name}%`]
+      )
+      return response
+    } catch (error) {
+      throw error
+    }
+  };
+
+  //Remover uma Venda Finalizada
+  async function removeSalesClient(id: number) {
+    try {
+      await database.execAsync("DELETE FROM SalesClient WHERE id = " + id)
+    } catch (error) {
+      throw error
+    }
+  };
+
+  //Remover Itens da Venda Finalizada
+  async function removeSales(id: number) {
+    try {
+      await database.execAsync("DELETE FROM Sales WHERE id = " + id)
+    } catch (error) {
+      throw error
+    }
+  };
+
   return {
     createClient,
     searchByClient,
     removeClient,
     createProducts,
     searchByProduct,
+    updateProducts,
+    removeProduct,
     createTableItems,
     searchByItems,
     updateIncrementItens,
@@ -220,6 +354,12 @@ export default function useDataBase(){
     removeItensName,
     filterByItems,
     verifyClient,
+    SalesClient,
+    Sales,
+    listSales,
+    listSalesClients,
+    removeSales,
+    removeSalesClient,
   };
 
 };
